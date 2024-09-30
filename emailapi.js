@@ -1,58 +1,46 @@
-const nodemailer = require('nodemailer');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const nodemailer=require('nodemailer');
+const express=require('express');
+const {GoogleGenerativeAI} =require("@google/generative-ai");
+const cors=require('cors');
+const genAI= new GoogleGenerativeAI(process.env.API);
 require('dotenv').config();
 
-const cors = require('cors');
 
-const handler = async (req, res) => {
-  try {
-    if (req.method === 'POST') {
-      const { from, apppass, to, mail, promptt } = req.body;
+const app=express();
+app.use(express.json());
+app.use(cors());
+app.use('/',(req,res)=>{
+    res.send("HELLO FROM API!");
+})
 
-      // Check if required fields are present
-      if (!from || !apppass || !to || !mail || !promptt) {
-        return res.status(400).send("Missing required fields");
-      }
-
-      let transformer = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: from,
-          pass: apppass
+app.post('/sendEmail',async(req,res)=>{
+    let transformer=nodemailer.createTransport({
+        service:'gmail',
+        auth:{
+            user:req.body.from,
+            pass:req.body.apppass
+    
+        }});
+        const genAI= new GoogleGenerativeAI(process.env.API);
+        const model=genAI.getGenerativeModel({model:"gemini-pro"});
+       const prompt="Write an email about this"+req.body.promptt;
+        const result=await model.generateContent(prompt);
+        const response=await result.response;
+      const mailtext=response.text();
+    
+        let mail={
+            from:req.body.from,
+            to:req.body.to,
+            subject:req.body.mail,
+            text:mailtext,
+        
         }
-      });
+        transformer.sendMail(mail,(err,info)=>{
+            res.send("SENT");
+           console.log("Sent");
+        })
 
-      const genAI = new GoogleGenerativeAI(process.env.API);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = "Write an email about this: " + promptt;
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const mailtext = response.text();
-
-      let mailData = {
-        from,
-        to,
-        subject: mail,
-        text: mailtext
-      };
-
-      transformer.sendMail(mailData, (err, info) => {
-        if (err) {
-          return res.status(500).send("Error sending email");
-        }
-        res.send("SENT");
-      });
-    } else {
-      res.send("HELLO FROM API!");
-    }
-  } catch (error) {
-    console.error("Error in API handler:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-const corsMiddleware = cors();
-
-module.exports = (req, res) => {
-  corsMiddleware(req, res, () => handler(req, res));
-};
+})
+app.listen(5000,()=>{
+    console.log("HELLLOOO");
+})
