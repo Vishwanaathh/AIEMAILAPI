@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        background-color: navajowhite;
+        font-family: monospace;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    button{
+        background-color: blue;
+        color:aliceblue;
+    }
+</style>
+<body>
+    <h1>AUTOMATIC AI EMAIL SENDER</h1>
+    <div>
+    <input type="text" placeholder="enter your email" id="from"/><br>
+    <input type="password" placeholder="enter your app password" id="apppass"/><br>
+    <input type="text" placeholder="enter whom to send " id="to"/><br>
+    <input type="text" placeholder="enter subject" id="mail"/><br>
+    <textarea id="prompttt" placeholder="Enter AI PROMPT"></textarea><br>
+    <button id="send" onclick="send()"> GENERATE AND SEND THIS MAIL</button>
+    </div>
+
+</body>
+<script>
+ 
+     
+    function send(){
+        let fromm=document.getElementById('from').value;
+    let apppasss=document.getElementById('apppass').value;
+    let too=document.getElementById('to').value;
+    let prompttt=document.getElementById('prompttt').value;
+    let maill=document.getElementById('mail').value;
+        fetch('https://aiemailapi-45lwhf65s-vishwanaathhs-projects.vercel.app/sendEmail',{
+              method:"POST",
+              mode: "no-cors",
+              headers: {
+            'Content-Type': 'application/json'  // Specify that you are sending JSON data
+        },
+              body:JSON.stringify({
+                from:fromm,
+                apppass:apppasss,
+                promptt:prompttt,
+                to:too,
+                mail:maill
+              })
+        })
+        
+
+        
+    }
+    
+    
+    </script>
+</html>
