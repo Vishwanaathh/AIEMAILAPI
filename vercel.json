@@ -1,20 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "api/emailapi.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/sendEmail",
-        "dest": "/api/emailapi.js"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/api/emailapi.js"
-      }
-    ]
-  }
-  
+  "version": 2,
+  "builds": [
+    {
+      "src": "emailapi.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/sendEmail",
+      "dest": "/emailapi.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/emailapi.js"
+    }
+  ]
+}
